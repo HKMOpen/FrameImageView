@@ -19,7 +19,6 @@
             android:id="@+id/circularImageView"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:src="@drawable/car"
             app:civ_border="true"
             app:civ_border_color="#6fbfc3"
             app:civ_border_width="8dp"
@@ -53,12 +52,39 @@
             android:progress="8"
             android:progressDrawable="@drawable/scrubber_progress" />
 
-        <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
-            android:id="@+id/shadeslider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_top" />
+        <!--       <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
+                   android:id="@+id/shade_slider"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/margin_top"
+                   app:color_slider_scheme="@drawable/color_pallete_2"
 
+                   />
+
+               <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
+                   android:id="@+id/shader_grey"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/margin_top"
+                   app:color_slider_scheme="@drawable/grey"
+
+                   />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/frame1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Frame Color" />
+
+            <Button
+                android:id="@+id/frame2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -39,6 +39,13 @@ public class FrameImageView extends ImageView {
     private Drawable drawable;
     private Paint paint;
     private Paint paintBorder;
+    private final Matrix matrix;
+    private final RectF outter;
+    private final RectF innerRec;
+
+    //the constant M for the rate of width and height
+    //   private float m;
+    private float scale_total;
 
     //region Constructor & Init Method
     public FrameImageView(final Context context) {
@@ -51,6 +58,9 @@ public class FrameImageView extends ImageView {
 
     public FrameImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        matrix = new Matrix();
+        outter = new RectF();
+        innerRec = new RectF();
         init(context, attrs, defStyleAttr);
     }
 
@@ -130,29 +140,28 @@ public class FrameImageView extends ImageView {
     public void onDraw(Canvas canvas) {
         // Load the bitmap
         loadBitmap();
-
         // Check if image isn't null
         if (image == null)
             return;
-
         if (!isInEditMode()) {
             canvasSize = Math.min(canvas.getWidth(), canvas.getHeight());
             canvas_sw = canvas.getWidth();
             canvas_sh = canvas.getHeight();
         }
-
         canvas.drawRect(outter, paintBorder);
         canvas.drawRect(innerRec, paint);
     }
 
     private void loadBitmap() {
-        if (this.drawable == getDrawable()) {
-            updateShader();
-            return;
+
+        if (this.drawable == null) {
+            this.drawable = getDrawable();
+            this.image = drawableToBitmap(this.drawable);
         }
-        this.drawable = getDrawable();
-        this.image = drawableToBitmap(this.drawable);
-        updateShader();
+
+        if (this.drawable != null) {
+            updateShader();
+        }
     }
 
     @Override
@@ -163,7 +172,6 @@ public class FrameImageView extends ImageView {
         canvas_sh = h;
         if (h < canvasSize)
             canvasSize = h;
-
         if (image != null)
             updateShader();
     }
@@ -177,64 +185,45 @@ public class FrameImageView extends ImageView {
         paintBorder.setShadowLayer(shadowRadius, 0.0f, shadowRadius / 2, shadowColor);
     }
 
-    //the constant M for the rate of width and height
-    //   private float m;
-    private float scale_total;
-    final Matrix matrix = new Matrix();
-    final RectF outter = new RectF();
-    final RectF innerRec = new RectF();
 
     private void updateShader() {
         if (image == null)
             return;
-
         float available_w = canvas_sw - borderWidth * 2f - shadowRadius * 2f;
         float available_h = canvas_sh - borderWidth * 2f - shadowRadius * 2f;
-
         int size = Math.min(image.getWidth(), image.getHeight());
         int width = (image.getWidth() - size) / 2;
         int height = (image.getHeight() - size) / 2;
-
         float dx = available_w / (float) image.getWidth();
         float dy = available_h / (float) image.getHeight();
         scale_total = Math.min(dx, dy);
-
-
         final float centerx = canvas_sw / 2f, centery = canvas_sh / 2f;
         final float w_float = scale_total * image.getWidth();
         final float h_float = scale_total * image.getHeight();
-
         innerRec.set(
                 centerx - w_float / 2f,
                 centery - h_float / 2f,
                 centerx + w_float / 2f,
                 centery + h_float / 2f
         );
-
         outter.set(
                 centerx - w_float / 2f - borderWidth,
                 centery - h_float / 2f - borderWidth,
                 centerx + w_float / 2f + borderWidth,
                 centery + h_float / 2f + borderWidth
         );
-
         BitmapShader shader = new BitmapShader(image, Shader.TileMode.REPEAT, Shader.TileMode.REPEAT);
         // Center Image in Shader
         if (width != 0 || height != 0) {
             // source isn't square, move viewport to center
             matrix.reset();
             matrix.postScale(scale_total, scale_total);
-
-
             matrix.postTranslate(
                     (available_w - w_float) / 2f + shadowRadius + borderWidth,
                     (available_h - h_float) / 2f + shadowRadius + borderWidth
             );
-
-
             shader.setLocalMatrix(matrix);
         }
-
         // Set Shader in Paint
         paint.setShader(shader);
     }
