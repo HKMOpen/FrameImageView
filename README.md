@@ -13,10 +13,10 @@ This is an Android project allowing to realize a frame ImageView in the simplest
 USAGE
 -----
 
-To make a circular ImageView add CircularImageView in your layout XML and add CircularImageView library in your project or you can also grab it via Gradle:
+To make a circular ImageView add FrameImageView in your layout XML and add FrameImageView library in your project or you can also grab it via Gradle:
 
 ```groovy
-
+compile 'com.hkm.ui:frame-imageview:3.10.1'
 ```
 
 XML
@@ -34,7 +34,7 @@ XML
         app:fic_shadow_color="#8BC34A"/>
 ```
 
-You must use the following properties in your XML to change your CircularImageView.
+You must use the following properties in your XML to change your FrameImageView.
 
 
 #####Properties:
@@ -50,15 +50,15 @@ JAVA
 -----
 
 ```java
-CircularImageView circularImageView = (CircularImageView)findViewById(R.id.yourCircularImageView);
+FrameImageView mFrameImageView = (FrameImageView)findViewById(R.id.yourFrameImageView);
 // Set Border
-circularImageView.setBorderColor(getResources().getColor(R.color.GrayLight));
-circularImageView.setBorderWidth(10);
+mFrameImageView.setBorderColor(getResources().getColor(R.color.GrayLight));
+mFrameImageView.setBorderWidth(10);
 // Add Shadow with default param
-circularImageView.addShadow();
+mFrameImageView.addShadow();
 // or with custom param
-circularImageView.setShadowRadius(15);
-circularImageView.setShadowColor(Color.RED);
+mFrameImageView.setShadowRadius(15);
+mFrameImageView.setShadowColor(Color.RED);
 ```
 
 LINK
@@ -74,4 +74,4 @@ I realized this project using this post:
 LICENCE
 -----
 
-CircularImageView by [Lopez Mikhael](http://mikhaellopez.com/) is licensed under a [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+FrameImageView by [Lopez Mikhael](http://mikhaellopez.com/) is licensed under a [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
