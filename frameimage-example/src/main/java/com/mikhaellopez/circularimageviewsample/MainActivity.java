@@ -38,32 +38,43 @@ import com.mikhaellophes.frameImageView.FrameImageView;
  */
 public class MainActivity extends AppCompatActivity {
 
-    private FrameImageView frameImageView;
+    private FrameImageView mFrameIV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        frameImageView = (FrameImageView) findViewById(R.id.circularImageView);
-
+        mFrameIV = (FrameImageView) findViewById(R.id.circularImageView);
         Handler h = new Handler();
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Glide.with(getApplicationContext()).load(R.drawable.alien32).asBitmap().into(new SimpleTarget<Bitmap>() {
+             /*   Glide.with(getApplicationContext()).load(R.drawable.pp5).asBitmap().into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        frameImageView.setImageBitmap(resource);
+                        mFrameIV.setImageBitmap(resource);
                     }
                 });
+*/
+                Glide.with(getBaseContext()).load(R.drawable.pp6).asBitmap()
+                        .override(2000, 2000)
+                        //.fitCenter()
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                mFrameIV.setImageBitmap(resource);
+                                /*frameImageView.setImageBitmap(resource);
+                                init(mode);*/
+                            }
+                        });
+
             }
         }, 1000);
-
         // BORDER
         ((SeekBar) findViewById(R.id.seekBarBorderWidth)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                frameImageView.setBorderWidth(progress * (int) getResources().getDisplayMetrics().density);
+                mFrameIV.setBorderWidth(progress * (int) getResources().getDisplayMetrics().density);
             }
 
             @Override
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         ((SeekBar) findViewById(R.id.seekBarShadowRadius)).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                frameImageView.setShadowRadius(progress);
+                mFrameIV.setShadowRadius(progress);
             }
 
             @Override
@@ -96,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
         /* lobster.addOnColorListener(new OnColorListener() {
             @Override
             public void onColorChanged(@ColorInt int color) {
-                frameImageView.setBorderColor(color);
-                //   frameImageView.setShadowColor(color);
+                mFrameIV.setBorderColor(color);
+                //   mFrameIV.setShadowColor(color);
             }
 
             @Override
@@ -132,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("ok", new ColorPickerClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
-                        frameImageView.setBorderColor(selectedColor);
+                        mFrameIV.setBorderColor(selectedColor);
                     }
                 })
                 .setNegativeButton("cancel", new DialogInterface.OnClickListener() {

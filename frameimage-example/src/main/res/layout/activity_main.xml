@@ -19,12 +19,12 @@
             android:id="@+id/circularImageView"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            app:civ_border="true"
-            app:civ_border_color="#6fbfc3"
-            app:civ_border_width="8dp"
-            app:civ_shadow="true"
-            app:civ_shadow_color="#404c8a"
-            app:civ_shadow_radius="10" />
+            app:fic_border="true"
+            app:fic_border_color="#6fbfc3"
+            app:fic_border_width="8dp"
+            app:fic_shadow="true"
+            app:fic_shadow_color="#404c8a"
+            app:fic_shadow_radius="10" />
 
     </LinearLayout>
 

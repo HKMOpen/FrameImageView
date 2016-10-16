@@ -76,16 +76,16 @@ public class FrameImageView extends ImageView {
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.FrameImageView, defStyleAttr, 0);
 
         // Init Border
-        if (attributes.getBoolean(R.styleable.FrameImageView_civ_border, true)) {
+        if (attributes.getBoolean(R.styleable.FrameImageView_fic_border, true)) {
             float defaultBorderSize = DEFAULT_BORDER_WIDTH * getContext().getResources().getDisplayMetrics().density;
-            setBorderWidth(attributes.getDimension(R.styleable.FrameImageView_civ_border_width, defaultBorderSize));
-            setBorderColor(attributes.getColor(R.styleable.FrameImageView_civ_border_color, Color.WHITE));
+            setBorderWidth(attributes.getDimension(R.styleable.FrameImageView_fic_border_width, defaultBorderSize));
+            setBorderColor(attributes.getColor(R.styleable.FrameImageView_fic_border_color, Color.WHITE));
         }
 
         // Init Shadow
-        if (attributes.getBoolean(R.styleable.FrameImageView_civ_shadow, false)) {
+        if (attributes.getBoolean(R.styleable.FrameImageView_fic_shadow, false)) {
             shadowRadius = DEFAULT_SHADOW_RADIUS;
-            drawShadow(attributes.getFloat(R.styleable.FrameImageView_civ_shadow_radius, shadowRadius), attributes.getColor(R.styleable.FrameImageView_civ_shadow_color, shadowColor));
+            drawShadow(attributes.getFloat(R.styleable.FrameImageView_fic_shadow_radius, shadowRadius), attributes.getColor(R.styleable.FrameImageView_fic_shadow_color, shadowColor));
         }
     }
     //endregion

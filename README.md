@@ -1,8 +1,8 @@
 <p align="center"><img src="http://i67.tinypic.com/2ij1d2r.jpg"></p>
 
-CircularImageView
+FrameImageView
 =================
-
+[ ![Download](https://api.bintray.com/packages/jjhesk/maven/frame-imageview/images/download.svg) ](https://bintray.com/jjhesk/maven/frame-imageview/_latestVersion)
 [![Platform](https://img.shields.io/badge/platform-android-green.svg)](http://developer.android.com/index.html)
 [![API](https://img.shields.io/badge/API-11%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=11)
 
@@ -23,15 +23,15 @@ XML
 -----
 
 ```xml
-<com.mikhaellopez.circularimageview.CircularImageView
+<com.mikhaellopez.frameImageView.FrameImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:src="@drawable/image"
-        app:civ_border_color="#EEEEEE"
-        app:civ_border_width="4dp"
-        app:civ_shadow="true"
-        app:civ_shadow_radius="10"
-        app:civ_shadow_color="#8BC34A"/>
+        app:fic_border_color="#EEEEEE"
+        app:fic_border_width="4dp"
+        app:fic_shadow="true"
+        app:fic_shadow_radius="10"
+        app:fic_shadow_color="#8BC34A"/>
 ```
 
 You must use the following properties in your XML to change your CircularImageView.
@@ -39,12 +39,12 @@ You must use the following properties in your XML to change your CircularImageVi
 
 #####Properties:
 
-* `app:civ_border`          (boolean)   -> default true
-* `app:civ_border_color`    (color)     -> default WHITE
-* `app:civ_border_width`    (dimension) -> default 4dp
-* `app:civ_shadow`          (boolean)   -> default false
-* `app:civ_shadow_color`    (color)     -> default BLACK
-* `app:civ_shadow_radius`   (float)     -> default 8.0f
+* `app:fic_border`          (boolean)   -> default true
+* `app:fic_border_color`    (color)     -> default WHITE
+* `app:fic_border_width`    (dimension) -> default 4dp
+* `app:fic_shadow`          (boolean)   -> default false
+* `app:fic_shadow_color`    (color)     -> default BLACK
+* `app:fic_shadow_radius`   (float)     -> default 8.0f
 
 JAVA
 -----

@@ -17,6 +17,14 @@ out/
 .gradle/
 build/
 
+*/build
+/proguard-rules.pro
+/src/androidTest
+/src/test
+
+
+
+
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -34,12 +42,10 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
-
+*/*.iml
+/.idea/*
 # Keystore files
 *.jks
-
-*.iml
 /.gradle
 /local.properties
 /.idea

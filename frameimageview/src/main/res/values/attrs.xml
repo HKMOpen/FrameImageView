@@ -2,12 +2,12 @@
 <resources>
 
     <declare-styleable name="FrameImageView">
-        <attr name="civ_border" format="boolean"/>
-        <attr name="civ_border_width" format="dimension"/>
-        <attr name="civ_border_color" format="color"/>
-        <attr name="civ_shadow" format="boolean"/>
-        <attr name="civ_shadow_color" format="color"/>
-        <attr name="civ_shadow_radius" format="float"/>
+        <attr name="fic_border" format="boolean"/>
+        <attr name="fic_border_width" format="dimension"/>
+        <attr name="fic_border_color" format="color"/>
+        <attr name="fic_shadow" format="boolean"/>
+        <attr name="fic_shadow_color" format="color"/>
+        <attr name="fic_shadow_radius" format="float"/>
     </declare-styleable>
 
 </resources>

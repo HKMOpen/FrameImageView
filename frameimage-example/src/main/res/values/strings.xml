@@ -1,7 +1,7 @@
 <resources>
 
     <!-- APP DEFAULT -->
-    <string name="app_name">CircularImageView</string>
+    <string name="app_name">FrameImageView</string>
 
     <!-- OTHER -->
     <string name="show_on_github">Show on GitHub</string>

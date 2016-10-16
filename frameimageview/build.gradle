@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 //apply plugin: 'com.github.dcendents.android-maven'
 //apply plugin: 'com.jfrog.bintray'
 // This is the library version used when deploying the artifact
-version = "3.0.2"
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 24
-        versionCode 10
-        versionName version
+        versionCode 33
+        versionName project.VERSION_NAME
     }
 
     buildTypes {
@@ -23,6 +23,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:24.2.0'
-    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:support-annotations:24.2.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
 }
+apply from: 'bintray_3_4.gradle'
