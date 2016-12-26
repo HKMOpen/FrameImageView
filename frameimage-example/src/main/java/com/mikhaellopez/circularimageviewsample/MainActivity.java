@@ -3,13 +3,9 @@ package com.mikhaellopez.circularimageviewsample;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +22,7 @@ import com.flask.colorpicker.ColorPickerView;
 import com.flask.colorpicker.OnColorSelectedListener;
 import com.flask.colorpicker.builder.ColorPickerClickListener;
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
-import com.larswerkman.lobsterpicker.LobsterPicker;
-import com.larswerkman.lobsterpicker.OnColorListener;
-import com.larswerkman.lobsterpicker.sliders.LobsterOpacitySlider;
-import com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider;
-import com.mikhaellophes.frameImageView.FrameImageView;
+import com.mikhaellophes.frameImageView.T2D.FrameImageView;
 
 
 /**
@@ -54,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         mFrameIV.setImageBitmap(resource);
                     }
-                });
-*/
+                });*/
+
                 Glide.with(getBaseContext()).load(R.drawable.pp6).asBitmap()
                         .override(2000, 2000)
                         //.fitCenter()

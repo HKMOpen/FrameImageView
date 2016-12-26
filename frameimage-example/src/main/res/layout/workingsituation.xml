@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorB2">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.mikhaellophes.frameImageView.T2D.EditFrameImageView
+        android:id="@+id/edcircularImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:fic_border_color_d="#6fbfc3"
+        app:fic_border_d="true"
+        app:fic_border_width_d="8dp"
+        app:fic_default_width_d="8dp"
+        app:fic_shadow_color_d="#0c133a"
+        app:fic_shadow_d="true"
+        app:fic_shadow_radius_d="10" />
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_space"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="70dp" />
+
+        <Button
+            android:id="@+id/button_out_d"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="get info" />
+
+        <Button
+            android:id="@+id/button_out_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+
+            android:text="x touch" />
+    </LinearLayout>
+
+</RelativeLayout>

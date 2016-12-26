@@ -16,7 +16,7 @@ USAGE
 To make a circular ImageView add FrameImageView in your layout XML and add FrameImageView library in your project or you can also grab it via Gradle:
 
 ```groovy
-compile 'com.hkm.ui:frame-imageview:3.10.1'
+compile 'com.hkm.ui:frame-imageview:3.20.0'
 ```
 
 XML
@@ -32,6 +32,12 @@ XML
         app:fic_shadow="true"
         app:fic_shadow_radius="10"
         app:fic_shadow_color="#8BC34A"/>
+
+<com.mikhaellopez.frameImageView.EditFrameImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:src="@drawable/image"
+  />
 ```
 
 You must use the following properties in your XML to change your FrameImageView.

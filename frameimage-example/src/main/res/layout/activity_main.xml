@@ -15,7 +15,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <com.mikhaellophes.frameImageView.FrameImageView
+        <com.mikhaellophes.frameImageView.T2D.FrameImageView
             android:id="@+id/circularImageView"
             android:layout_width="300dp"
             android:layout_height="300dp"
@@ -23,7 +23,7 @@
             app:fic_border_color="#6fbfc3"
             app:fic_border_width="8dp"
             app:fic_shadow="true"
-            app:fic_shadow_color="#404c8a"
+            app:fic_shadow_color="#0c133a"
             app:fic_shadow_radius="10" />
 
     </LinearLayout>
@@ -52,23 +52,23 @@
             android:progress="8"
             android:progressDrawable="@drawable/scrubber_progress" />
 
-        <!--       <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
+
+<!--       <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
                    android:id="@+id/shade_slider"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:layout_marginTop="@dimen/margin_top"
                    app:color_slider_scheme="@drawable/color_pallete_2"
-
                    />
-
                <com.larswerkman.lobsterpicker.sliders.LobsterShadeSlider
                    android:id="@+id/shader_grey"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:layout_marginTop="@dimen/margin_top"
-                   app:color_slider_scheme="@drawable/grey"
+                   app:color_slider_scheme="@drawable/grey"/>
+-->
 
-                   />-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,5 +86,4 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

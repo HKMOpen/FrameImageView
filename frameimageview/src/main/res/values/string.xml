@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ExceptionDialog -->
+    <string name="exception_dialog_title">Error</string>
+    <string name="exception_dialog_message_unknown">Internal exception occurred.</string>
+    <string name="exception_dialog_message_no_browser">No web browser is installed. Unable to open link.</string>
+
+</resources>

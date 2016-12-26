@@ -6,5 +6,9 @@
     <color name="colorPrimaryDark">#212121</color>
     <color name="colorAccent">@color/colorPrimary</color>
     <color name="colorHighlight">#212121</color>
+    <color name="colorM2">#0fa7ff</color>
+    <color name="colorH2">#fefae9</color>
+    <color name="colorB2">#d8bf56</color>
+    <color name="colorC2">#000000</color>
 
 </resources>

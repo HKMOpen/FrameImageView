@@ -1,4 +1,4 @@
-package com.mikhaellophes.frameImageView;
+package com.mikhaellophes.frameImageView.T2D;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,17 +12,24 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.mikhaellophes.circularimageview.R;
 
+import static android.view.MotionEvent.INVALID_POINTER_ID;
+
 /**
  * Created by Mikhael LOPEZ on 09/10/2015, hesk 9/4/2016
  */
-public class FrameImageView extends ImageView {
-    private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
+public class FrameImageView extends View {
+    private static final ImageView.ScaleType SCALE_TYPE = ImageView.ScaleType.CENTER_CROP;
 
     // Default Values
     private static final float DEFAULT_BORDER_WIDTH = 4;
@@ -36,7 +43,6 @@ public class FrameImageView extends ImageView {
 
     // Object used to draw
     private Bitmap image;
-    private Drawable drawable;
     private Paint paint;
     private Paint paintBorder;
     private final Matrix matrix;
@@ -46,6 +52,7 @@ public class FrameImageView extends ImageView {
     //the constant M for the rate of width and height
     //   private float m;
     private float scale_total;
+    private ScaleGestureDetector mScaleDetector;
 
     //region Constructor & Init Method
     public FrameImageView(final Context context) {
@@ -61,7 +68,32 @@ public class FrameImageView extends ImageView {
         matrix = new Matrix();
         outter = new RectF();
         innerRec = new RectF();
+        mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         init(context, attrs, defStyleAttr);
+    }
+
+    float pivotPointX = 0f;
+    float pivotPointY = 0f;
+    private float mScaleFactor = 1.f;
+
+    private class ScaleListener extends
+            ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+
+            pivotPointX = detector.getFocusX();
+            pivotPointY = detector.getFocusY();
+
+            Log.d(LOG_TAG, "mScaleFactor " + mScaleFactor);
+            Log.d(LOG_TAG, "pivotPointY " + pivotPointY + ", pivotPointX= "
+                    + pivotPointX);
+            mScaleFactor = Math.max(0.05f, mScaleFactor);
+            updateScale(mScaleFactor);
+            invalidate();
+            return true;
+        }
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -120,27 +152,24 @@ public class FrameImageView extends ImageView {
         invalidate();
     }
 
-    @Override
-    public ScaleType getScaleType() {
-        return SCALE_TYPE;
+
+    void updateScale(float mfactor) {
+       // this.setScaleX(mfactor);
+       // this.setScaleY(mfactor);
     }
 
-    @Override
-    public void setScaleType(ScaleType scaleType) {
-        if (scaleType != SCALE_TYPE) {
-            throw new IllegalArgumentException(String.format("ScaleType %s not supported. ScaleType.CENTER_CROP is used by default. So you don't need to use ScaleType.", scaleType));
-        }
+    void updateMousePoint2(float x, float y) {
+       // this.setTranslationX(x);
+       // this.setTranslationY(y);
     }
-
-    //endregion
 
 
     //region Draw Method
     @Override
     public void onDraw(Canvas canvas) {
-        // Load the bitmap
+        // -Load the bitmap
         loadBitmap();
-        // Check if image isn't null
+        // -Check if image isn't null
         if (image == null)
             return;
         if (!isInEditMode()) {
@@ -152,14 +181,13 @@ public class FrameImageView extends ImageView {
         canvas.drawRect(innerRec, paint);
     }
 
+    public void setImageBitmap(Bitmap map) {
+        this.image = map;
+        loadBitmap();
+    }
+
     private void loadBitmap() {
-
-        if (this.drawable == null) {
-            this.drawable = getDrawable();
-            this.image = drawableToBitmap(this.drawable);
-        }
-
-        if (this.drawable != null) {
+        if (this.image != null) {
             updateShader();
         }
     }
@@ -185,6 +213,30 @@ public class FrameImageView extends ImageView {
         paintBorder.setShadowLayer(shadowRadius, 0.0f, shadowRadius / 2, shadowColor);
     }
 
+    private float centerx;
+    private float centery;
+    private float _tx;
+    private float _ty;
+    private boolean useTouchPoint = false;
+
+
+    private void updateMousePoint(float x, float y) {
+        useTouchPoint = true;
+        _tx = x;
+        _ty = y;
+        updateShader();
+        invalidate();
+    }
+
+    private void determinCenter() {
+        if (useTouchPoint) {
+            centerx = _tx;
+            centery = _ty;
+        } else {
+            centerx = canvas_sw / 2f;
+            centery = canvas_sh / 2f;
+        }
+    }
 
     private void updateShader() {
         if (image == null)
@@ -197,7 +249,7 @@ public class FrameImageView extends ImageView {
         float dx = available_w / (float) image.getWidth();
         float dy = available_h / (float) image.getHeight();
         scale_total = Math.min(dx, dy);
-        final float centerx = canvas_sw / 2f, centery = canvas_sh / 2f;
+        determinCenter();
         final float w_float = scale_total * image.getWidth();
         final float h_float = scale_total * image.getHeight();
         innerRec.set(
@@ -319,7 +371,87 @@ public class FrameImageView extends ImageView {
             result = canvasSize;
         }
 
-        return (result + 2);
+        return (result + 5);
     }
     //endregion
+
+
+    private float mPosX = 0f;
+    private float mPosY = 0f;
+
+    private float mLastTouchX;
+    private float mLastTouchY;
+    private static final int INVALID_POINTER_ID = -1;
+    private static final String LOG_TAG = "TouchImageView";
+
+    // The ‘active pointer’ is the one currently moving our object.
+    private int mActivePointerId = INVALID_POINTER_ID;
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        // Let the ScaleGestureDetector inspect all events.
+        mScaleDetector.onTouchEvent(ev);
+
+        final int action = ev.getAction();
+        switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                final float x = ev.getX();
+                final float y = ev.getY();
+
+                mLastTouchX = x;
+                mLastTouchY = y;
+
+                mActivePointerId = ev.getPointerId(0);
+                break;
+
+
+            case MotionEvent.ACTION_MOVE:
+                final int pointerIndex = ev.findPointerIndex(mActivePointerId);
+                final float x1 = ev.getX(pointerIndex);
+                final float y1 = ev.getY(pointerIndex);
+
+                // Only move if the ScaleGestureDetector isn't processing a gesture.
+                if (!mScaleDetector.isInProgress()) {
+                    final float dx = x1 - mLastTouchX;
+                    final float dy = y1 - mLastTouchY;
+                    mPosX += dx;
+                    mPosY += dy;
+                    updateMousePoint2(mPosX, mPosY);
+                   // invalidate();
+                }
+
+                mLastTouchX = x1;
+                mLastTouchY = y1;
+                break;
+
+
+            case MotionEvent.ACTION_UP:
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+
+
+            case MotionEvent.ACTION_CANCEL:
+                mActivePointerId = INVALID_POINTER_ID;
+                break;
+
+
+            case MotionEvent.ACTION_POINTER_UP:
+                final int pointerIndex_ = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                final int pointerId = ev.getPointerId(pointerIndex_);
+                if (pointerId == mActivePointerId) {
+                    // This was our active pointer going up. Choose a new
+                    // active pointer and adjust accordingly.
+                    final int newPointerIndex = pointerIndex_ == 0 ? 1 : 0;
+                    mLastTouchX = ev.getX(newPointerIndex);
+                    mLastTouchY = ev.getY(newPointerIndex);
+                    mActivePointerId = ev.getPointerId(newPointerIndex);
+                }
+                break;
+
+        }
+
+        return true;
+    }
+
 }

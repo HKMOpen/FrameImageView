@@ -4,12 +4,12 @@ apply plugin: 'com.android.library'
 // This is the library version used when deploying the artifact
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 24
+        minSdkVersion 17
+        targetSdkVersion 25
         versionCode 33
         versionName project.VERSION_NAME
     }
@@ -23,7 +23,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:24.2.1'
-    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:support-annotations:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'org.rajawali3d:rajawali:1.1.777'
+    compile 'com.github.pedrovgs:draggablepanel:1.9'
 }
 apply from: 'bintray_3_4.gradle'

@@ -2,12 +2,22 @@
 <resources>
 
     <declare-styleable name="FrameImageView">
-        <attr name="fic_border" format="boolean"/>
-        <attr name="fic_border_width" format="dimension"/>
-        <attr name="fic_border_color" format="color"/>
-        <attr name="fic_shadow" format="boolean"/>
-        <attr name="fic_shadow_color" format="color"/>
-        <attr name="fic_shadow_radius" format="float"/>
+        <attr name="fic_border" format="boolean" />
+        <attr name="fic_border_width" format="dimension" />
+        <attr name="fic_border_color" format="color" />
+        <attr name="fic_shadow" format="boolean" />
+        <attr name="fic_shadow_color" format="color" />
+        <attr name="fic_shadow_radius" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="EditFrameImageView">
+        <attr name="fic_border_d" format="boolean" />
+        <attr name="fic_border_width_d" format="dimension" />
+        <attr name="fic_border_color_d" format="color" />
+        <attr name="fic_shadow_d" format="boolean" />
+        <attr name="fic_shadow_color_d" format="color" />
+        <attr name="fic_shadow_radius_d" format="float" />
+        <attr name="fic_default_width_d" format="dimension" />
     </declare-styleable>
 
 </resources>
