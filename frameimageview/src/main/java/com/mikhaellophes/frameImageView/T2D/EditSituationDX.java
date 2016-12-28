@@ -51,7 +51,9 @@ public class EditSituationDX extends Fragment {
     protected void setSpaceWidth(float n) {
         edFrame.setWhiteSpace(n);
     }
-
+    protected void setScale(float n) {
+        edFrame.setScaleWhole(n);
+    }
     protected void setSpaceColor(int n) {
         edFrame.setWhiteSpaceColor(n);
     }

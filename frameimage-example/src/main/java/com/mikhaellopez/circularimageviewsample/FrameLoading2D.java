@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,6 +27,9 @@ public class FrameLoading2D extends EditSituationDX {
     private TextView mStringSpan;
     private Button mStringSpanButton;
     private Button mXtouch;
+    private SeekBar s1;
+    private SeekBar s2;
+    private SeekBar s3;
     private boolean touchx = false;
 
     @Override
@@ -63,12 +67,51 @@ public class FrameLoading2D extends EditSituationDX {
                 mStringSpan.setText(getCurrentConfiguration());
             }
         });
+        s1 = (SeekBar) view.findViewById(R.id.seekbar1);
+        s2 = (SeekBar) view.findViewById(R.id.seekbar2);
+        s3 = (SeekBar) view.findViewById(R.id.seekbar3);
         mXtouch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 setTouch(touchx = !touchx);
             }
         });
+        s1.setOnSeekBarChangeListener(new SeekbarOnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                setOutBorderWidth((float) i * getResources().getDisplayMetrics().density);
+            }
+        });
+        s2.setOnSeekBarChangeListener(new SeekbarOnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                setScale((float) i / (float) 20);
+            }
+        });
+        s3.setOnSeekBarChangeListener(new SeekbarOnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                setSpaceWidth((float) i * getResources().getDisplayMetrics().density);
+            }
+        });
     }
+
+    class SeekbarOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+
 
 }

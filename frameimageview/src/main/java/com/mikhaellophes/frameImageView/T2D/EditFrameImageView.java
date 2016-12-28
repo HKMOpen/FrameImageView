@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -23,23 +24,27 @@ import com.mikhaellophes.circularimageview.R;
  * Created by hesk on 16年12月26日.
  */
 public class EditFrameImageView extends View {
-    private static final ImageView.ScaleType SCALE_TYPE = ImageView.ScaleType.CENTER_CROP;
+    public static final String TAG_FRAME_COLOR = "image_meta.frame_color";
+    public static final String TAG_FRAME_BACKDROP = "image_meta.backdrop_color";
+    public static final String TAG_FRAME_SHADOW = "image_meta.frame_shadow";
+    public static final String TAG_FRAME_WIDTH = "image_meta.frame_width";
+    public static final String TAG_FRAME_ORIGINAL_IMAGE = "original_image";
+    public static final String TAG_FRAME_ORIGINAL_SM = "original_small_image";
+    public static final String TAG_FRAME_SPACE_WIDTH = "image_meta.frame_spc";
+    public static final String TAG_FRAME_SPACE_COLOR = "image_meta.frame_spc_color";
+    public static final String TAG_FRAME_HX = "image_meta.x";
+    public static final String TAG_FRAME_HY = "image_meta.y";
+    public static final String TAG_FRAME_SCALE = "image_meta.scale";
+    public static final String TAG_FRAME_TRANSFORM = "image_meta.transform";
+    public static final String TAG_FRAME_ID = "id_image_basemap";
 
     // Default Values
     private static final float DEFAULT_BORDER_WIDTH = 4f;
     private static final float DEFAULT_SHADOW_RADIUS = 8.0f;
 
-    // Properties
-    private float borderWidth;
-    private float defaultWidth;
-    private float whiteSpace = 10f;
-    private int canvasSize, canvas_sw, canvas_sh;
-    private float shadowRadius;
-    private int shadowColor = Color.BLACK;
-
     // Object used to draw
     private Bitmap image;
-    private Paint paint;
+    private Paint paintInner;
     private Paint paintBorder;
     private Paint paintcontent;
     private Paint paintCenter;
@@ -50,12 +55,24 @@ public class EditFrameImageView extends View {
 
     //the constant M for the rate of width and height
     //   private float m;
-    private float scale_total = 1f;
-    private ScaleGestureDetector mScaleDetector;
 
+    private ScaleGestureDetector mScaleDetector;
+    private float pivotPointX = 0f;
+    private float pivotPointY = 0f;
+    private float mScaleFactor = 1.f;
+    private float scale_total = 1.f;
     private float centerx;
     private float centery;
     private boolean useTouchPoint = false;
+
+    // Properties
+    private float borderWidth;
+    private float defaultWidth;
+    private float whiteSpace = 10f;
+    private int canvasSize, canvas_sw, canvas_sh;
+    private float shadowRadius;
+    private int shadowColor = Color.BLACK;
+
 
     //region Constructor & Init Method
     public EditFrameImageView(final Context context) {
@@ -76,9 +93,6 @@ public class EditFrameImageView extends View {
         init(context, attrs, defStyleAttr);
     }
 
-    float pivotPointX = 0f;
-    float pivotPointY = 0f;
-    private float mScaleFactor = 1.f;
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
@@ -99,9 +113,9 @@ public class EditFrameImageView extends View {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         // Init paint
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL);
+        paintInner = new Paint();
+        paintInner.setAntiAlias(true);
+        paintInner.setStyle(Paint.Style.FILL);
 
         paintBorder = new Paint();
         paintBorder.setAntiAlias(true);
@@ -135,47 +149,104 @@ public class EditFrameImageView extends View {
             drawShadow(attributes.getFloat(R.styleable.EditFrameImageView_fic_shadow_radius_d, shadowRadius), attributes.getColor(R.styleable.EditFrameImageView_fic_shadow_color_d, shadowColor));
         }
     }
+
     //endregion
+    public void setScaleWhole(float mfactor) {
+        this.scale_total = mfactor;
+        callDraw();
+    }
 
     //region Set Attr Method
     public void setBorderWidth(float borderWidth) {
         this.borderWidth = borderWidth;
         requestLayout();
-        invalidate();
+        callDraw();
     }
 
     public void setBorderColor(int borderColor) {
         if (paintBorder != null)
             paintBorder.setColor(borderColor);
-        invalidate();
+        callDraw();
     }
 
     public void addShadow() {
         if (shadowRadius == 0)
             shadowRadius = DEFAULT_SHADOW_RADIUS;
         drawShadow(shadowRadius, shadowColor);
-        invalidate();
+        callDraw();
     }
 
     public void setShadowRadius(float shadowRadius) {
         drawShadow(shadowRadius, shadowColor);
-        invalidate();
+        callDraw();
     }
 
     public void setWhiteSpace(float sp_width) {
         whiteSpace = sp_width;
-        invalidate();
+        callDraw();
     }
 
     public void setWhiteSpaceColor(int sp_width_color) {
-        if (paint != null)
-            paint.setColor(sp_width_color);
-        invalidate();
+        if (paintInner != null)
+            paintInner.setColor(sp_width_color);
+        callDraw();
     }
 
     public void setShadowColor(int shadowColor) {
         drawShadow(shadowRadius, shadowColor);
+        callDraw();
+    }
+
+    private OnFrameConfigChange changeListener;
+
+    public void setOnChangeListener(OnFrameConfigChange listener) {
+        changeListener = listener;
+    }
+
+    private void callDraw() {
         invalidate();
+        if (changeListener != null) {
+            changeListener.transform(centerx, centery, scale_total);
+        }
+    }
+
+    /**
+     * get data from the current configuration and it will disable touch event
+     *
+     * @return bundle item
+     */
+    public final Bundle captureBundleConfig() {
+        Bundle mb = new Bundle();
+        mb.putFloat(TAG_FRAME_HX, centerx);
+        mb.putFloat(TAG_FRAME_HY, centery);
+        mb.putFloat(TAG_FRAME_SCALE, scale_total);
+        mb.putFloat(TAG_FRAME_WIDTH, borderWidth);
+        mb.putFloat(TAG_FRAME_SPACE_WIDTH, whiteSpace);
+        mb.putFloat(TAG_FRAME_SHADOW, shadowRadius);
+        mb.putInt(TAG_FRAME_SPACE_COLOR, paintInner.getColor());
+        mb.putInt(TAG_FRAME_BACKDROP, shadowColor);
+        mb.putInt(TAG_FRAME_COLOR, paintBorder.getColor());
+        disableTouch(false);
+        return mb;
+    }
+
+    /**
+     * restore the configuration and it will disable touch event
+     *
+     * @param mb bundle
+     */
+    public final void restoreCofig(Bundle mb) {
+        centerx = mb.getFloat(TAG_FRAME_HX, centerx);
+        centery = mb.getFloat(TAG_FRAME_HY, centery);
+        scale_total = mb.getFloat(TAG_FRAME_SCALE, scale_total);
+        borderWidth = mb.getFloat(TAG_FRAME_WIDTH, borderWidth);
+        whiteSpace = mb.getFloat(TAG_FRAME_SPACE_WIDTH, whiteSpace);
+        shadowRadius = mb.getFloat(TAG_FRAME_SHADOW, shadowRadius);
+        setWhiteSpaceColor(mb.getInt(TAG_FRAME_SPACE_COLOR, paintInner.getColor()));
+        setShadowColor(mb.getInt(TAG_FRAME_BACKDROP, shadowColor));
+        setBorderColor(mb.getInt(TAG_FRAME_COLOR, paintBorder.getColor()));
+        disableTouch(false);
+        callDraw();
     }
 
     public float[] retrieveContentConfig() {
@@ -189,10 +260,8 @@ public class EditFrameImageView extends View {
         // -Check if image isn't null
         if (image == null)
             return;
-
         // -Load the bitmap
         loadBitmap();
-
         if (!isInEditMode()) {
             canvasSize = Math.min(canvas.getWidth(), canvas.getHeight());
             if (defaultWidth < 100) {
@@ -201,7 +270,7 @@ public class EditFrameImageView extends View {
             }
         }
         canvas.drawRect(outter, paintBorder);
-        canvas.drawRect(innerRec, paint);
+        canvas.drawRect(innerRec, paintInner);
         canvas.drawBitmap(image, matrix, paintcontent);
     }
 
@@ -229,40 +298,28 @@ public class EditFrameImageView extends View {
     private void updateShader() {
         if (image == null)
             return;
-
         int size = Math.min(image.getWidth(), image.getHeight());
-
         int width = (image.getWidth() - size) / 2;
         int height = (image.getHeight() - size) / 2;
-
-        // float dx = available_w / (float) image.getWidth();
-        // float dy = available_h / (float) image.getHeight();
-        // scale_total = Math.min(dx, dy);
-
-
-        final float w_float = scale_total * image.getWidth();
-        final float h_float = scale_total * image.getHeight();
-        final float applied_border_width = borderWidth * scale_total;
-        final float applied_whitespace = whiteSpace * scale_total;
-        final float rw = w_float / 2f;
-        final float rh = h_float / 2f;
-        final float scale_2 = (w_float - applied_border_width * 2f - applied_whitespace * 2f) / w_float * scale_total;
-
-        innerRec.set(centerx - rw, centery - rh, centerx + rw, centery + rh);
-
-        outter.set(centerx - rw - applied_border_width,
-                centery - rh - applied_border_width,
-                centerx + rw + applied_border_width,
-                centery + rh + applied_border_width);
-
-        centerRec.set(centerx - rw - applied_whitespace - applied_border_width,
-                centery - rh - applied_whitespace - applied_border_width,
-                centerx + rw + applied_whitespace + applied_border_width,
-                centery + rh + applied_whitespace + applied_border_width);
-
+        float w_float = scale_total * image.getWidth();
+        float h_float = scale_total * image.getHeight();
+        float applied_border_width = borderWidth * scale_total;
+        float applied_whitespace = whiteSpace * scale_total;
+        float rw = w_float / 2f;
+        float rh = h_float / 2f;
+        float combo = applied_border_width + applied_whitespace;
+        float w_outter = rw + combo;
+        float h_outter = rh + combo;
+        float w_inner = rw + applied_whitespace;
+        float h_inner = rh + applied_whitespace;
+        final float scale_2 = scale_total;
         matrix.reset();
         matrix.postScale(scale_2, scale_2);
-        matrix.postTranslate(centerx - rw + applied_border_width + applied_whitespace, centery - rh + applied_border_width + applied_whitespace);
+        matrix.postTranslate(centerx - rw, centery - rh);
+        innerRec.set(centerx - w_inner, centery - h_inner,
+                centerx + w_inner, centery + h_inner);
+        outter.set(centerx - w_outter, centery - h_outter,
+                centerx + w_outter, centery + h_outter);
     }
 
     private void loadBitmap() {
@@ -401,6 +458,7 @@ public class EditFrameImageView extends View {
 
         return (result + 5);
     }
+
     //endregion
     private float mPosX = 0f;
     private float mPosY = 0f;

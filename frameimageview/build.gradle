@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 //apply plugin: 'com.github.dcendents.android-maven'
 //apply plugin: 'com.jfrog.bintray'
-// This is the library version used when deploying the artifact
+//This is the library version used when deploying the artifact
 
 android {
     compileSdkVersion 25
@@ -21,7 +21,6 @@ android {
         }
     }
 }
-
 dependencies {
     compile 'com.android.support:support-annotations:25.1.0'
     compile 'com.android.support:appcompat-v7:25.1.0'

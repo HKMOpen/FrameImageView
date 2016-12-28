@@ -1,1 +1,1 @@
-include ':frameimage-example', ':frameimageview'
+include ':frameimage-example', ':frameimageview', ':T3Dframer'
