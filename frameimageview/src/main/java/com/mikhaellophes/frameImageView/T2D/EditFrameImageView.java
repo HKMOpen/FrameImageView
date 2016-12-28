@@ -197,6 +197,18 @@ public class EditFrameImageView extends View {
         callDraw();
     }
 
+    public final void setHangingPosition(float x, float y) {
+        centerx = x;
+        centery = y;
+        callDraw();
+    }
+
+    public final void defaultPosition() {
+        centerx = canvas_sw / 2f;
+        centery = canvas_sh / 2f;
+        callDraw();
+    }
+
     private OnFrameConfigChange changeListener;
 
     public void setOnChangeListener(OnFrameConfigChange listener) {
@@ -283,17 +295,6 @@ public class EditFrameImageView extends View {
         useTouchPoint = b;
     }
 
-    public void setHangingPosition(float x, float y) {
-        centerx = canvas_sw / 2f;
-        centery = canvas_sh / 2f;
-        invalidate();
-    }
-
-    public void defaultPosition() {
-        centerx = canvas_sw / 2f;
-        centery = canvas_sh / 2f;
-        invalidate();
-    }
 
     private void updateShader() {
         if (image == null)
@@ -418,7 +419,6 @@ public class EditFrameImageView extends View {
         /*int imageSize = (width < height) ? width : height;
         setMeasuredDimension(imageSize, imageSize);*/
         setMeasuredDimension(width, height);
-        defaultPosition();
     }
 
     private int measureWidth(int measureSpec) {
