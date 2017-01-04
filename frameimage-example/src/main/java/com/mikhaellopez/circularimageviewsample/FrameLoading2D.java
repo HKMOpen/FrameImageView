@@ -14,6 +14,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.mikhaellophes.frameImageView.T2D.EditSituationDX;
 
+import static com.mikhaellophes.frameImageView.T2D.EditFrameImageView.TAG_DIMENSION_DISCRIPTION;
+
 /**
  * Created by hesk on 16年12月24日.
  */
@@ -25,8 +27,10 @@ public class FrameLoading2D extends EditSituationDX {
     }
 
     private TextView mStringSpan;
+    private TextView mTShowUp;
     private Button mStringSpanButton;
     private Button mXtouch;
+    private Button mMetaInfo;
     private SeekBar s1;
     private SeekBar s2;
     private SeekBar s3;
@@ -43,10 +47,6 @@ public class FrameLoading2D extends EditSituationDX {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         setBackground(resource);
-
-                        edFrame.displayMeasurement(true);
-
-                        edFrame.configMeasureCal(45f, 45f);
                     }
                 });
 
@@ -58,12 +58,17 @@ public class FrameLoading2D extends EditSituationDX {
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         setContent(resource);
                         setSpaceColor(ContextCompat.getColor(getContext(), R.color.colorH2));
+                        edFrame.configMeasureCal(45f, 45f);
+                        edFrame.displayMeasurement(true);
+                        edFrame.setHangingPosition(350f, 350f);
                     }
                 });
 
         mStringSpan = (TextView) view.findViewById(R.id.txt_space);
+        mTShowUp = (TextView) view.findViewById(R.id.text_show_up);
         mStringSpanButton = (Button) view.findViewById(R.id.button_out_d);
         mXtouch = (Button) view.findViewById(R.id.button_out_toggle);
+        mMetaInfo = (Button) view.findViewById(R.id.button_metainfo);
         mStringSpanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,6 +82,13 @@ public class FrameLoading2D extends EditSituationDX {
             @Override
             public void onClick(View view) {
                 setTouch(touchx = !touchx);
+            }
+        });
+        mMetaInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle mb = getMeta();
+                mTShowUp.setText(mb.getString(TAG_DIMENSION_DISCRIPTION));
             }
         });
         s1.setOnSeekBarChangeListener(new SeekbarOnSeekBarChangeListener() {

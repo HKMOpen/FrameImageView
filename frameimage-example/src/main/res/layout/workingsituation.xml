@@ -47,6 +47,12 @@
             android:layout_height="50dp"
             android:text="x touch" />
 
+        <Button
+            android:id="@+id/button_metainfo"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="get metainfo" />
+
         <SeekBar
             android:id="@+id/seekbar1"
             android:layout_width="match_parent"
@@ -75,4 +81,10 @@
             android:progressDrawable="@drawable/scrubber_progress" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/text_show_up"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/colorH2" />
 </RelativeLayout>

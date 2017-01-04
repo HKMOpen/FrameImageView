@@ -39,6 +39,7 @@ public class EditFrameImageView extends View {
     public static final String TAG_FRAME_HY = "image_meta.y";
     public static final String TAG_FRAME_SCALE = "image_meta.scale";
     public static final String TAG_FRAME_TRANSFORM = "image_meta.transform";
+    public static final String TAG_DIMENSION_DISCRIPTION = "order.dimension.meta";
     public static final String TAG_FRAME_ID = "id_image_basemap";
 
     // Default Values
@@ -60,8 +61,9 @@ public class EditFrameImageView extends View {
 
     //the constant M for the rate of width and height
     //   private float m;
-
+    private OnFrameConfigChange changeListener;
     private ScaleGestureDetector mScaleDetector;
+
     private float pivotPointX = 0f;
     private float pivotPointY = 0f;
     private float mScaleFactor = 1.f;
@@ -279,7 +281,12 @@ public class EditFrameImageView extends View {
         callDraw();
     }
 
-    private OnFrameConfigChange changeListener;
+    public final void displayMeasureInch(boolean b) {
+        display_inch = b;
+        callDraw();
+    }
+
+
 
     public void setOnChangeListener(OnFrameConfigChange listener) {
         changeListener = listener;
@@ -290,6 +297,21 @@ public class EditFrameImageView extends View {
         if (changeListener != null) {
             changeListener.transform(centerx, centery, scale_total);
         }
+    }
+
+    private StringBuilder getMeasurementMeta() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Outer Frame");
+        sb.append(" ");
+        sb.append(label_1);
+        sb.append(" x ");
+        sb.append(label_3);
+        sb.append(", Inner Frame");
+        sb.append(" ");
+        sb.append(label_2);
+        sb.append(" x ");
+        sb.append(label_4);
+        return sb;
     }
 
     /**
@@ -308,6 +330,7 @@ public class EditFrameImageView extends View {
         mb.putInt(TAG_FRAME_SPACE_COLOR, paintInner.getColor());
         mb.putInt(TAG_FRAME_BACKDROP, shadowColor);
         mb.putInt(TAG_FRAME_COLOR, paintBorder.getColor());
+        mb.putString(TAG_DIMENSION_DISCRIPTION, getMeasurementMeta().toString());
         disableTouch(false);
         return mb;
     }
@@ -497,6 +520,9 @@ public class EditFrameImageView extends View {
         paintBorder.setShadowLayer(shadowRadius, 0.0f, shadowRadius / 2, shadowColor);
     }
 
+    public float getTotalScale() {
+        return scale_total;
+    }
 
     void updateScale(float mfactor) {
         if (useTouchPoint) {

@@ -51,9 +51,11 @@ public class EditSituationDX extends Fragment {
     protected void setSpaceWidth(float n) {
         edFrame.setWhiteSpace(n);
     }
+
     protected void setScale(float n) {
         edFrame.setScaleWhole(n);
     }
+
     protected void setSpaceColor(int n) {
         edFrame.setWhiteSpaceColor(n);
     }
@@ -93,7 +95,11 @@ public class EditSituationDX extends Fragment {
         edFrame.defaultPosition();
     }
 
-    protected void setTouch(boolean h){
+    protected void setTouch(boolean h) {
         edFrame.disableTouch(h);
+    }
+
+    protected Bundle getMeta() {
+       return edFrame.captureBundleConfig();
     }
 }
