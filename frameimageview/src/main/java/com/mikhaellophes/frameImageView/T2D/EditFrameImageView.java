@@ -7,10 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -48,6 +51,8 @@ public class EditFrameImageView extends View {
     private Paint paintBorder;
     private Paint paintcontent;
     private Paint paintCenter;
+    private Paint labelPaint;
+    private Paint measurementPaint;
     private final Matrix matrix;
     private final RectF outter;
     private final RectF innerRec;
@@ -64,14 +69,52 @@ public class EditFrameImageView extends View {
     private float centerx;
     private float centery;
     private boolean useTouchPoint = false;
+    private boolean display_measurement = false;
+    private boolean display_inch = false;
 
     // Properties
-    private float borderWidth;
-    private float defaultWidth;
+    private float borderWidth = 10f;
+    private float defaultWidth = 10f;
     private float whiteSpace = 10f;
     private int canvasSize, canvas_sw, canvas_sh;
     private float shadowRadius;
     private int shadowColor = Color.BLACK;
+
+    private String label_1 = "";
+    private String label_2 = "";
+    private String label_3 = "";
+    private String label_4 = "";
+    private PointF content_measurement = new PointF();
+    private PointF content_measurement_factor = new PointF();
+    /**
+     * the actual border outer area
+     */
+    private float outterbx = 0f;
+
+    /**
+     * the actual border inner area
+     */
+    private float innerbx = 0f;
+
+    private final static float inch_conversion = 0.393700787f;
+    private final static float gap = 10f;
+    private final static float dh = 50f;
+
+    private PointF mPoint1 = new PointF();
+    private PointF mPoint2 = new PointF();
+    private PointF mPoint3 = new PointF();
+    private PointF mPoint4 = new PointF();
+
+
+    //endregion
+    private float mPosX = 0f;
+    private float mPosY = 0f;
+    private float mLastTouchX = 0f;
+    private float mLastTouchY = 0f;
+    private static final int INVALID_POINTER_ID = -1;
+    private static final String LOG_TAG = "TouchImageView";
+    // The ‘active pointer’ is the one currently moving our object.
+    private int mActivePointerId = INVALID_POINTER_ID;
 
 
     //region Constructor & Init Method
@@ -132,6 +175,18 @@ public class EditFrameImageView extends View {
         paintcontent.setDither(true);
         paintcontent.setStyle(Paint.Style.FILL);
 
+        labelPaint = new Paint();
+        labelPaint.setStyle(Paint.Style.FILL);
+        labelPaint.setColor(Color.BLACK);
+        labelPaint.setTextSize(25f);
+        labelPaint.setTextAlign(Paint.Align.CENTER);
+        labelPaint.setAntiAlias(true);
+
+        measurementPaint = new Paint();
+        measurementPaint.setStrokeWidth(3);
+        measurementPaint.setPathEffect(null);
+        measurementPaint.setColor(Color.WHITE);
+        measurementPaint.setStyle(Paint.Style.STROKE);
         // Load the styled attributes and set their properties
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.EditFrameImageView, defStyleAttr, 0);
 
@@ -148,6 +203,7 @@ public class EditFrameImageView extends View {
             shadowRadius = DEFAULT_SHADOW_RADIUS;
             drawShadow(attributes.getFloat(R.styleable.EditFrameImageView_fic_shadow_radius_d, shadowRadius), attributes.getColor(R.styleable.EditFrameImageView_fic_shadow_color_d, shadowColor));
         }
+        updateText();
     }
 
     //endregion
@@ -156,14 +212,22 @@ public class EditFrameImageView extends View {
         callDraw();
     }
 
-    //region Set Attr Method
-    public void setBorderWidth(float borderWidth) {
-        this.borderWidth = borderWidth;
-        requestLayout();
+    public void setWhiteSpace(float sp_width) {
+        this.whiteSpace = sp_width;
+        updateWhiteSpaceMeasurement();
+        updateText();
         callDraw();
     }
 
-    public void setBorderColor(int borderColor) {
+    //region Set Attr Method
+    public void setBorderWidth(float borderWidth) {
+        this.borderWidth = borderWidth;
+        updateBorderMeasurement();
+        updateText();
+        callDraw();
+    }
+
+    public void setBorderColor(@ColorInt int borderColor) {
         if (paintBorder != null)
             paintBorder.setColor(borderColor);
         callDraw();
@@ -181,18 +245,14 @@ public class EditFrameImageView extends View {
         callDraw();
     }
 
-    public void setWhiteSpace(float sp_width) {
-        whiteSpace = sp_width;
-        callDraw();
-    }
 
-    public void setWhiteSpaceColor(int sp_width_color) {
+    public void setWhiteSpaceColor(@ColorInt int sp_width_color) {
         if (paintInner != null)
             paintInner.setColor(sp_width_color);
         callDraw();
     }
 
-    public void setShadowColor(int shadowColor) {
+    public void setShadowColor(@ColorInt int shadowColor) {
         drawShadow(shadowRadius, shadowColor);
         callDraw();
     }
@@ -206,6 +266,16 @@ public class EditFrameImageView extends View {
     public final void defaultPosition() {
         centerx = canvas_sw / 2f;
         centery = canvas_sh / 2f;
+        callDraw();
+    }
+
+    public final void setMeasurementColor(@ColorInt int color) {
+        measurementPaint.setColor(color);
+        callDraw();
+    }
+
+    public final void displayMeasurement(boolean b) {
+        display_measurement = b;
         callDraw();
     }
 
@@ -257,6 +327,9 @@ public class EditFrameImageView extends View {
         setWhiteSpaceColor(mb.getInt(TAG_FRAME_SPACE_COLOR, paintInner.getColor()));
         setShadowColor(mb.getInt(TAG_FRAME_BACKDROP, shadowColor));
         setBorderColor(mb.getInt(TAG_FRAME_COLOR, paintBorder.getColor()));
+        updateBorderMeasurement();
+        updateWhiteSpaceMeasurement();
+        updateText();
         disableTouch(false);
         callDraw();
     }
@@ -265,6 +338,79 @@ public class EditFrameImageView extends View {
         return new float[]{
                 centerx, centery, scale_total
         };
+    }
+
+    private void updateBorderMeasurement() {
+        if (content_measurement_factor.x > 0) {
+            outterbx = borderWidth * content_measurement_factor.x;
+        }
+    }
+
+    private void updateWhiteSpaceMeasurement() {
+        if (content_measurement_factor.x > 0) {
+            innerbx = whiteSpace * content_measurement_factor.x;
+        }
+    }
+
+    public void configMeasureCal(float x_cm, float y_cm) {
+        content_measurement.set(x_cm, y_cm);
+        if (image != null) {
+            content_measurement_factor.set(
+                    x_cm / (float) image.getWidth(),
+                    y_cm / (float) image.getHeight());
+        }
+        updateBorderMeasurement();
+        updateWhiteSpaceMeasurement();
+        updateText();
+        callDraw();
+    }
+
+    private void updateText() {
+        //the outer horizontal
+        float w1 = outterbx * 2f + innerbx * 2f + content_measurement.x;
+        label_1 = buildSb(w1).toString();
+        //the inner horizontal
+        float w2 = innerbx * 2f + content_measurement.x;
+        label_2 = buildSb(w2).toString();
+        //the outer vertical
+        float w3 = outterbx * 2f + innerbx * 2f + content_measurement.y;
+        label_3 = buildSb(w3).toString();
+        //the inner vertical
+        float w4 = innerbx * 2f + content_measurement.y;
+        label_4 = buildSb(w4).toString();
+    }
+
+    private StringBuilder buildSb(float measurement) {
+        StringBuilder sb4 = new StringBuilder();
+        if (display_inch) {
+            sb4.append(measurement * inch_conversion);
+            sb4.append(" inch");
+        } else {
+            sb4.append(measurement);
+            sb4.append(" cm");
+        }
+        return sb4;
+    }
+
+    private void measure_configuration(Canvas canvas) {
+        if (!display_measurement) return;
+        canvas.drawPath(buildPathHV1(), measurementPaint);
+        canvas.drawPath(buildPathHV2(), measurementPaint);
+        canvas.drawPath(buildPathV1(), measurementPaint);
+        canvas.drawPath(buildPathV2(), measurementPaint);
+
+        canvas.drawText(label_1, mPoint1.x, mPoint1.y, labelPaint);
+        canvas.drawText(label_2, mPoint2.x, mPoint2.y, labelPaint);
+
+        canvas.save();
+        canvas.rotate(90f, mPoint3.x, mPoint3.y);
+        canvas.drawText(label_3, mPoint3.x, mPoint3.y, labelPaint);
+        canvas.restore();
+
+        canvas.save();
+        canvas.rotate(90f, mPoint4.x, mPoint4.y);
+        canvas.drawText(label_4, mPoint4.x, mPoint4.y, labelPaint);
+        canvas.restore();
     }
 
     @Override
@@ -284,6 +430,7 @@ public class EditFrameImageView extends View {
         canvas.drawRect(outter, paintBorder);
         canvas.drawRect(innerRec, paintInner);
         canvas.drawBitmap(image, matrix, paintcontent);
+        measure_configuration(canvas);
     }
 
     public void setImageBitmap(Bitmap map) {
@@ -294,7 +441,6 @@ public class EditFrameImageView extends View {
     public void disableTouch(boolean b) {
         useTouchPoint = b;
     }
-
 
     private void updateShader() {
         if (image == null)
@@ -342,7 +488,7 @@ public class EditFrameImageView extends View {
         }
     }
 
-    private void drawShadow(float shadowRadius, int shadowColor) {
+    private void drawShadow(float shadowRadius, @ColorInt int shadowColor) {
         this.shadowRadius = shadowRadius;
         this.shadowColor = shadowColor;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
@@ -362,6 +508,8 @@ public class EditFrameImageView extends View {
         if (useTouchPoint) {
             centerx = x;
             centery = y;
+            mPosX = x;
+            mPosY = y;
         }
     }
 
@@ -459,16 +607,6 @@ public class EditFrameImageView extends View {
         return (result + 5);
     }
 
-    //endregion
-    private float mPosX = 0f;
-    private float mPosY = 0f;
-    private float mLastTouchX;
-    private float mLastTouchY;
-    private static final int INVALID_POINTER_ID = -1;
-    private static final String LOG_TAG = "TouchImageView";
-    // The ‘active pointer’ is the one currently moving our object.
-    private int mActivePointerId = INVALID_POINTER_ID;
-
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (useTouchPoint) {
@@ -535,6 +673,89 @@ public class EditFrameImageView extends View {
         } else {
             return super.onTouchEvent(ev);
         }
+    }
+
+
+    private Path buildPathHV1() {
+        float in = outter.top - gap - dh;
+        float out = outter.top - gap;
+        float mid = outter.top - gap - dh / 2f;
+        Path path = new Path();
+        path.moveTo(outter.left, in);
+        path.lineTo(outter.left, out);
+
+        path.moveTo(outter.right, in);
+        path.lineTo(outter.right, out);
+
+        path.moveTo(outter.left, mid);
+        path.lineTo(outter.right, mid);
+        path.close();
+
+        float width = outter.right - outter.left;
+        mPoint1.set(outter.left + width / 2f, outter.top - dh / 2f);
+        return path;
+    }
+
+    private Path buildPathHV2() {
+        float in = outter.top - gap - dh - dh;
+        float out = outter.top - gap - dh;
+        float mid = outter.top - gap - dh / 2f - dh;
+        Path path = new Path();
+        path.moveTo(innerRec.left, in);
+        path.lineTo(innerRec.left, out);
+
+        path.moveTo(innerRec.right, in);
+        path.lineTo(innerRec.right, out);
+
+        path.moveTo(innerRec.left, mid);
+        path.lineTo(innerRec.right, mid);
+        path.close();
+        float width = innerRec.right - innerRec.left;
+        mPoint2.set(innerRec.left + width / 2f, outter.top - dh - dh / 2f);
+        return path;
+    }
+
+    private Path buildPathV1() {
+        float in = outter.right + gap;
+        float out = outter.right + gap + dh;
+        float mid = outter.right + gap + dh / 2f;
+        float mid_h = (outter.bottom - outter.top) / 2f + outter.top;
+        Path path = new Path();
+        path.moveTo(in, outter.top);
+        path.lineTo(out, outter.top);
+
+        path.moveTo(in, outter.bottom);
+        path.lineTo(out, outter.bottom);
+
+        path.moveTo(mid, outter.top);
+        path.lineTo(mid, outter.bottom);
+        path.close();
+
+
+        mPoint3.set(mid, mid_h);
+        return path;
+    }
+
+    private Path buildPathV2() {
+        float in = outter.right + gap + dh;
+        float out = outter.right + gap + dh + dh;
+        float mid = outter.right + gap + dh / 2f + dh;
+        float mid_h = (outter.bottom - outter.top) / 2f + outter.top;
+
+        Path path = new Path();
+        path.moveTo(in, innerRec.top);
+        path.lineTo(out, innerRec.top);
+
+        path.moveTo(in, innerRec.bottom);
+        path.lineTo(out, innerRec.bottom);
+
+        path.moveTo(mid, innerRec.top);
+        path.lineTo(mid, innerRec.bottom);
+
+        path.close();
+
+        mPoint4.set(mid, mid_h);
+        return path;
     }
 
 }

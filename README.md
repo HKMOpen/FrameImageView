@@ -16,7 +16,7 @@ USAGE
 To make a circular ImageView add FrameImageView in your layout XML and add FrameImageView library in your project or you can also grab it via Gradle:
 
 ```groovy
-compile 'com.hkm.ui:frame-imageview:4.0.1'
+compile 'com.hkm.ui:frame-imageview:5.1.0'
 ```
 
 XML
@@ -42,6 +42,14 @@ XML
 
 You must use the following properties in your XML to change your FrameImageView.
 
+
+#####Features
+* Realtime measurement
+* inch to cm conversion
+* Measurement visualization
+* Realtime scale
+* Color border
+* Color inner border
 
 #####Properties:
 

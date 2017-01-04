@@ -44,6 +44,9 @@ public class FrameLoading2D extends EditSituationDX {
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                         setBackground(resource);
 
+                        edFrame.displayMeasurement(true);
+
+                        edFrame.configMeasureCal(45f, 45f);
                     }
                 });
 
@@ -94,6 +97,8 @@ public class FrameLoading2D extends EditSituationDX {
                 setSpaceWidth((float) i * getResources().getDisplayMetrics().density);
             }
         });
+
+
     }
 
     class SeekbarOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
