@@ -249,8 +249,17 @@ public class EditFrameImageView extends View {
 
 
     public void setWhiteSpaceColor(@ColorInt int sp_width_color) {
-        if (paintInner != null)
-            paintInner.setColor(sp_width_color);
+        if (paintInner != null) paintInner.setColor(sp_width_color);
+        callDraw();
+    }
+
+    public final void setMeasurementColor(@ColorInt int color) {
+        if (measurementPaint != null) measurementPaint.setColor(color);
+        callDraw();
+    }
+
+    public void setLabelColor(@ColorInt int sp_label_color) {
+        if (labelPaint != null) labelPaint.setColor(sp_label_color);
         callDraw();
     }
 
@@ -271,10 +280,6 @@ public class EditFrameImageView extends View {
         callDraw();
     }
 
-    public final void setMeasurementColor(@ColorInt int color) {
-        measurementPaint.setColor(color);
-        callDraw();
-    }
 
     public final void displayMeasurement(boolean b) {
         display_measurement = b;
@@ -285,7 +290,6 @@ public class EditFrameImageView extends View {
         display_inch = b;
         callDraw();
     }
-
 
 
     public void setOnChangeListener(OnFrameConfigChange listener) {
@@ -406,10 +410,12 @@ public class EditFrameImageView extends View {
     private StringBuilder buildSb(float measurement) {
         StringBuilder sb4 = new StringBuilder();
         if (display_inch) {
-            sb4.append(measurement * inch_conversion);
+            float _mea = measurement * inch_conversion;
+            sb4.append(String.format("%1$,.2f", _mea));
             sb4.append(" inch");
         } else {
-            sb4.append(measurement);
+            float _mea = measurement;
+            sb4.append(String.format("%1$,.2f", _mea));
             sb4.append(" cm");
         }
         return sb4;
