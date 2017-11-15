@@ -92,6 +92,8 @@ I realized this project using this post:
 * [Create circular image view in android](http://stackoverflow.com/a/16208548/1832221)
 * [How to add a shadow and a border on circular imageView android?](http://stackoverflow.com/q/17655264/1832221)
 
+### Thank you for your support and we will bring more amazing libraries to your productive works. We are accepting bitcoin by the address as below. Please scan the QR code to start
+![wallet](http://s32.postimg.org/sdd1oio1t/qrwallet.jpg)
 
 LICENCE
 -----
